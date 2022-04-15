@@ -1,0 +1,1714 @@
+openapi: 3.1.0
+info:
+  title: TruckersMP API
+  version: '2.0'
+  x-logo:
+    url: 'https://truckersmp.com/assets/img/truckersmp-logo-black.png'
+    href: 'https://truckersmp.com'
+servers:
+  - url: 'https://api.truckersmp.com/v2'
+    description: V2 - Production
+paths:
+  '/player/{id}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+        description: SteamID64 or TruckersMP ID
+    get:
+      summary: Fetch player information
+      tags:
+        - Players
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    $ref: '#/components/schemas/Player'
+                required:
+                  - error
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: true
+                  descriptor:
+                    type: string
+                    example: Unable to find player with that ID.
+                  response:
+                    type: string
+                    example: Unable to find player with that ID.
+                    deprecated: true
+                required:
+                  - error
+                  - response
+      operationId: get-player-id
+      description: |-
+        Lookup player information
+
+        **NOTE**: The API will respond with a 200 instead of 404 status code, but will have the respected body.
+  '/bans/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: SteamID64 or TruckersMP ID
+    get:
+      summary: Fetch player bans
+      tags:
+        - Players
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Ban'
+                required:
+                  - error
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: true
+                  descriptor:
+                    type: string
+                    example: Invalid user ID
+                required:
+                  - error
+                  - descriptor
+      operationId: get-bans-id
+      description: |-
+        Latest 5 bans for a selected user if bans are not hidden or user has no bans. Fetch the player information to check if user is currently banned
+
+
+        For the user to be banned the `expiration` date has to be passed or `active` has to be false.
+
+        **NOTE**: The API will respond with a 200 instead of 404 status code, but will have the respected body.
+  /servers:
+    get:
+      summary: Fetch all the available servers
+      tags:
+        - Servers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Server'
+                required:
+                  - error
+      operationId: get-servers
+      description: List of available TruckersMP servers and their status
+  /game_time:
+    get:
+      summary: Fetch the current in-game time
+      tags:
+        - Servers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  game_time:
+                    type: integer
+                    description: Game time returned in minutes (10 real seconds is 1 minute in-game)
+                required:
+                  - error
+                  - game_time
+      operationId: get-game_time
+      description: |-
+        The current in-game time.
+        Game time is expressed in minutes, where 10 real seconds is 1 minute of in-game time. It is number of minutes since 2015-25-10 15:48:32 CET.
+
+        Note: Game time may not be exact as time will drift.
+  /events:
+    get:
+      summary: 'Fetch all the current, upcoming, and featured events'
+      tags:
+        - Events
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    type: object
+                    properties:
+                      featured:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/EventIndex'
+                      today:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/EventIndex'
+                      now:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/EventIndex'
+                      upcoming:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/EventIndex'
+                required:
+                  - error
+      operationId: get-v2-events
+      description: 'List all of the current, upcoming, and featured TruckersMP events.'
+    parameters: []
+  '/events/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: Event ID
+    get:
+      summary: Fetch the specified event
+      tags:
+        - Events
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    $ref: '#/components/schemas/Event'
+                required:
+                  - error
+              examples: {}
+        '404':
+          $ref: '#/components/responses/PageNotFound'
+      operationId: get-events-id
+  /vtc:
+    get:
+      summary: 'Fetch all the recent, featured, and featured cover VTCs'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    type: object
+                    properties:
+                      recent:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/VTCIndex'
+                      featured:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/VTCIndex'
+                      featured_cover:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/VTCIndex'
+                    required:
+                      - recent
+                      - featured
+                      - featured_cover
+                required:
+                  - error
+      operationId: get-vtc
+      tags:
+        - Virtual Trucking Companies
+  '/vtc/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: VTC ID
+    get:
+      summary: Fetch the specified VTC
+      tags:
+        - Virtual Trucking Companies
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    $ref: '#/components/schemas/VTC'
+                required:
+                  - error
+        '404':
+          $ref: '#/components/responses/PageNotFound'
+      operationId: get-vtc-id
+  '/vtc/{id}/news':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: VTC ID
+    get:
+      summary: Fetch all the news from the specified VTC
+      tags:
+        - Virtual Trucking Companies
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    type: object
+                    properties:
+                      news:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/VTCNewsIndex'
+                required:
+                  - error
+        '404':
+          $ref: '#/components/responses/PageNotFound'
+      operationId: get-vtc-id-news
+  '/vtc/{id}/news/{news_id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: VTC ID
+      - schema:
+          type: string
+        name: news_id
+        in: path
+        required: true
+        description: News Article ID
+    get:
+      summary: Fetch the specified news article from the specified VTC
+      tags:
+        - Virtual Trucking Companies
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    $ref: '#/components/schemas/VTCNews'
+                required:
+                  - error
+        '404':
+          $ref: '#/components/responses/PageNotFound'
+      operationId: get-vtc-id-news-news_id
+  '/vtc/{id}/roles':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: VTC ID
+    get:
+      summary: Fetch all the roles from the specified VTC
+      tags:
+        - Virtual Trucking Companies
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    type: object
+                    properties:
+                      roles:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/VTCRole'
+                required:
+                  - error
+                  - response
+        '404':
+          $ref: '#/components/responses/PageNotFound'
+      operationId: get-vtc-id-roles
+  '/vtc/{id}/role/{role_id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: VTC ID
+      - schema:
+          type: string
+        name: role_id
+        in: path
+        required: true
+        description: Role ID
+    get:
+      summary: Fetch the specified role from the specified VTC
+      tags:
+        - Virtual Trucking Companies
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    $ref: '#/components/schemas/VTCRole'
+                required:
+                  - error
+        '404':
+          $ref: '#/components/responses/PageNotFound'
+      operationId: get-vtc-id-role-role_id
+  '/vtc/{id}/members':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: VTC ID
+    get:
+      summary: Fetch all the members from the specified VTC
+      tags:
+        - Virtual Trucking Companies
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    type: object
+                    properties:
+                      members:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/VTCMember'
+                required:
+                  - error
+        '404':
+          $ref: '#/components/responses/PageNotFound'
+      operationId: get-vtc-id-members
+  '/vtc/{id}/member/{member_id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: VTC ID
+      - schema:
+          type: string
+        name: member_id
+        in: path
+        required: true
+        description: Member ID
+    get:
+      summary: Fetch the specified member from the specified VTC
+      tags:
+        - Virtual Trucking Companies
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    $ref: '#/components/schemas/VTCMember'
+                required:
+                  - error
+        '404':
+          $ref: '#/components/responses/PageNotFound'
+      operationId: get-vtc-id-member-member_id
+  '/vtc/{id}/events':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: VTC ID
+    get:
+      summary: Fetch all the events from the specified VTC
+      tags:
+        - Virtual Trucking Companies
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EventIndex'
+                required:
+                  - error
+        '404':
+          $ref: '#/components/responses/PageNotFound'
+      operationId: get-vtc-id-events
+  '/vtc/{id}/events/{event_id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: VTC ID
+      - schema:
+          type: string
+        name: event_id
+        in: path
+        required: true
+        description: Event ID
+    get:
+      summary: Fetch the specified event from the specified VTC
+      tags:
+        - Virtual Trucking Companies
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    $ref: '#/components/schemas/Event'
+                required:
+                  - error
+        '404':
+          $ref: '#/components/responses/PageNotFound'
+      operationId: get-vtc-id-events-event_id
+  /version:
+    get:
+      summary: Fetch the current TruckersMP version for ETS2 and ATS
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
+      operationId: get-version
+      tags:
+        - Game Information
+  /rules:
+    get:
+      summary: Fetch the current in-game rules
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  rules:
+                    type: string
+                    description: Markdown of the current in-game rules
+                  revision:
+                    type: number
+                    description: Version number
+                required:
+                  - error
+                  - rules
+                  - revision
+      operationId: get-rules
+      description: ''
+      tags:
+        - Game Information
+components:
+  schemas:
+    Version:
+      description: ''
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the current version
+        numeric:
+          type: string
+          description: Numeric name of the current version
+        stage:
+          type: string
+          description: Current stage in the development process
+        ets2mp_checksum:
+          type: object
+          required:
+            - dll
+            - adb
+          properties:
+            dll:
+              type: string
+              description: Checksum of core.dll
+            adb:
+              type: string
+              description: Checksum of data1.adb
+        atsmp_checksum:
+          type: object
+          required:
+            - dll
+            - adb
+          properties:
+            dll:
+              type: string
+              description: Checksum of core.dll
+            adb:
+              type: string
+              description: Checksum of data1.adb
+        time:
+          type: string
+          description: The time that the version was released
+        supported_game_version:
+          type: string
+          description: ETS2 version that is supported
+        supported_ats_game_version:
+          type: string
+          description: ATS version that is supported
+      required:
+        - name
+        - numeric
+        - stage
+        - ets2mp_checksum
+        - atsmp_checksum
+        - time
+        - supported_game_version
+        - supported_ats_game_version
+    Player:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: number
+          description: The ID of the user requested
+        name:
+          type: string
+          description: The name of the user
+        avatar:
+          type: string
+          description: URL to the avatar used on the website
+        smallAvatar:
+          type: string
+          description: URL to the avatar used on the website (32px x 32px)
+        joinDate:
+          type: string
+          description: The date and time the user registered (UTC)
+        steamID64:
+          type: number
+          description: The SteamID64 of the user
+        steamID:
+          type: string
+          description: The SteamID64 of the user
+        discordSnowflake:
+          type: string
+          description: The Discord account linked to the user or null if not linked or private
+        displayVTCHistory:
+          type: boolean
+          description: Is the user's VTC History visible
+        groupName:
+          type: string
+          description: The name of the group the user belongs to
+        groupColor:
+          type: string
+          description: The color of the group
+        groupID:
+          type: number
+          description: The ID of the group the user belongs to
+        banned:
+          type: boolean
+          description: If the user is currently banned
+        bannedUntil:
+          type: string
+          description: The date and time the ban will expire (UTC) or `null` if not banned or ban is permanent
+        bansCount:
+          type: integer
+          description: The number of active bans a user has or `null` if staff
+        displayBans:
+          type: boolean
+          description: If the user has their bans hidden
+        patreon:
+          type: object
+          required:
+            - isPatron
+            - active
+          properties:
+            isPatron:
+              type: boolean
+              description: If the user has donated or is currently donating via Patreon
+            active:
+              type: boolean
+              description: If the user has an active Patreon subscription
+            color:
+              type: string
+              description: HEX code for subscribed tier
+            tierId:
+              type: integer
+              description: The tier ID of current pledge
+            currentPledge:
+              type: integer
+              description: Current pledge in cents
+            lifetimePledge:
+              type: integer
+              description: Lifetime pledge in cents
+            nextPledge:
+              type: integer
+              description: Next pledge in cents
+            hidden:
+              type: boolean
+              description: If user has their Patreon information hidden
+        permissions:
+          type: object
+          required:
+            - isStaff
+            - isUpperStaff
+            - isGameAdmin
+            - showDetailedOnWebMaps
+          properties:
+            isStaff:
+              type: boolean
+              description: If the user is a TruckersMP staff member
+            isUpperStaff:
+              type: boolean
+              description: If the user is part of upper staff within the TruckersMP team
+            isGameAdmin:
+              type: boolean
+              description: If the user has Game Moderator permissions
+            showDetailedOnWebMaps:
+              type: boolean
+              description: Always false
+        vtc:
+          type: object
+          required:
+            - id
+            - name
+            - tag
+            - inVTC
+            - memberID
+          properties:
+            id:
+              type: number
+              description: ID of the VTC the user belongs to or 0 if not in a VTC
+            name:
+              type: string
+              description: Name of the VTC the user belongs to or empty if not in a VTC
+            tag:
+              type: string
+              description: Tag of the VTC the user belongs to or empty if not in a VTC
+            inVTC:
+              type: boolean
+              description: If the user is in a VTC
+            memberID:
+              type: number
+              description: VTC member ID or 0 if not in a VTC
+      required:
+        - id
+        - name
+        - avatar
+        - smallAvatar
+        - joinDate
+        - steamID64
+        - steamID
+        - displayVTCHistory
+        - groupName
+        - groupColor
+        - groupID
+        - banned
+        - displayBans
+        - patreon
+        - permissions
+        - vtc
+    Ban:
+      description: ''
+      type: object
+      properties:
+        expiration:
+          type: string
+          description: The time the ban will expire
+        timeAdded:
+          type: string
+          description: The time the ban was issued
+        active:
+          type: boolean
+          description: If the ban is still active
+        reason:
+          type: string
+          description: The reason for the ban
+        adminName:
+          type: string
+          description: Name of the admin that banned the user
+        adminID:
+          type: number
+          description: TruckersMP ID for the admin that banned the user
+      required:
+        - expiration
+        - timeAdded
+        - active
+        - reason
+        - adminName
+        - adminID
+    Server:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: number
+          description: The ID given to the server
+        game:
+          type: string
+          description: What game the server is for (ETS2 or ATS)
+        ip:
+          type: string
+          description: The server ip address
+        port:
+          type: number
+          description: The port that the server runs on
+        name:
+          type: string
+          description: Name of the server
+        shortname:
+          type: string
+          description: Shortname for the server
+        idprefix:
+          type: string
+          description: Shown in-game in front of a player's ID
+        online:
+          type: boolean
+          description: If the server is online or not
+        players:
+          type: number
+          description: How many players are currently on the server
+        queue:
+          type: number
+          description: Amount of players waiting in the queue to join the server
+        maxplayers:
+          type: number
+          description: The max amount of players allowed on the server at once
+        mapid:
+          type: number
+          description: The map ID given to the server used by ETS2Map
+        displayorder:
+          type: number
+          description: Determines the order in which servers are displayed
+        speedlimiter:
+          type: number
+          description: If the speed limiter is enabled on the server (110 kmh for ETS2 and 80 mph for ATS)
+        collisions:
+          type: boolean
+          description: If server wide collisions is enabled
+        carsforplayers:
+          type: boolean
+          description: If cars are enabled for players
+        policecarsforplayers:
+          type: boolean
+          description: If police cars can be driven by players
+        afkenabled:
+          type: boolean
+          description: If AFK kick is enabled for players
+        event:
+          type: boolean
+          description: If the server is an event server
+        specialEvent:
+          type: boolean
+          description: 'Determine whether the server hosts special event files (e.g. map edits, special cargos or new paint jobs)'
+        promods:
+          type: boolean
+          description: Determine whether the server hosts ProMods
+        syncdelay:
+          type: number
+          description: Server tick rate
+      required:
+        - id
+        - game
+        - ip
+        - port
+        - name
+        - shortname
+        - online
+        - players
+        - queue
+        - maxplayers
+        - mapid
+        - displayorder
+        - speedlimiter
+        - collisions
+        - carsforplayers
+        - policecarsforplayers
+        - afkenabled
+        - event
+        - specialEvent
+        - promods
+        - syncdelay
+    EventIndex:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: number
+          description: The event's ID
+        event_type:
+          type: object
+          description: The event's type
+          required:
+            - key
+            - name
+          properties:
+            key:
+              type: string
+              description: The event's type key
+            name:
+              type: string
+              description: The event's type name
+        name:
+          type: string
+          description: The event's name
+        slug:
+          type: string
+          description: The event's slug
+        game:
+          type: string
+          description: The event's game (`ATS` | `ETS2`)
+        server:
+          type: object
+          description: The event's server information
+          required:
+            - id
+            - name
+          properties:
+            id:
+              type: number
+              description: The event's server ID
+            name:
+              type: string
+              description: The event's server name
+        language:
+          type: string
+          description: The event's main language
+        departure:
+          type: object
+          required:
+            - location
+            - city
+          properties:
+            location:
+              type: string
+              description: The event's departure location
+            city:
+              type: string
+              description: The event's departure city
+        arrive:
+          type: object
+          required:
+            - location
+            - city
+          properties:
+            location:
+              type: string
+              description: The event's arrival location
+            city:
+              type: string
+              description: The event's arrival city
+        start_at:
+          type: string
+          description: The date and time the event starts at (UTC)
+        banner:
+          type: string
+          description: URL to the banner used on the website
+        map:
+          type: string
+          description: URL to the map used on the website
+        description:
+          type: string
+          description: The event's description in Markdown
+        rule:
+          type: string
+          description: The event's rules in Markdown
+        voice_link:
+          type: string
+          description: URL to the event's voice location
+        external_link:
+          type: string
+          description: external URL specified for the event
+        featured:
+          type: string
+          description: If the event is featured
+        vtc:
+          type: object
+          description: If the Event is hosted by a VTC
+          properties:
+            id:
+              type: number
+              description: The VTC's ID
+            name:
+              type: string
+              description: The VTC's Name
+          required:
+            - id
+            - name
+        user:
+          type: object
+          required:
+            - id
+            - username
+          properties:
+            id:
+              type: number
+              description: The event's creator's ID
+            username:
+              type: string
+              description: The event's creator's username
+        attendances:
+          type: object
+          required:
+            - confirmed
+            - unsure
+          properties:
+            confirmed:
+              type: number
+              description: The number of confirmed attendees
+            unsure:
+              type: number
+              description: The number of unsure attendees
+        dlcs:
+          type: object
+          description: The event's required DLCs
+          required:
+            - dlc_id
+          properties:
+            dlc_id:
+              type: string
+              description: The DLCs id followed by the DLCs name
+        url:
+          type: string
+          description: URL to the event
+        created_at:
+          type: string
+          description: The date and time the event was created at (UTC)
+        updated_at:
+          type: string
+          description: The date and time the event was updated at (UTC)
+      required:
+        - id
+        - event_type
+        - name
+        - slug
+        - game
+        - server
+        - language
+        - departure
+        - arrive
+        - start_at
+        - banner
+        - description
+        - featured
+        - user
+        - attendances
+        - dlcs
+        - url
+        - created_at
+        - updated_at
+    Event:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: number
+          description: The event's ID
+        event_type:
+          type: object
+          required:
+            - key
+            - name
+          description: The event's type
+          properties:
+            key:
+              type: string
+              description: The event's type key
+            name:
+              type: string
+              description: The event's type name
+        name:
+          type: string
+          description: The event's name
+        slug:
+          type: string
+          description: The event's slug
+        game:
+          type: string
+          description: The event's game (`ATS` | `ETS2`)
+        server:
+          type: object
+          required:
+            - id
+            - name
+          description: The event's server information
+          properties:
+            id:
+              type: number
+              description: The event's server ID
+            name:
+              type: string
+              description: The event's server name
+        language:
+          type: string
+          description: The event's main language
+        departure:
+          type: object
+          required:
+            - location
+            - city
+          properties:
+            location:
+              type: string
+              description: The event's departure location
+            city:
+              type: string
+              description: The event's departure city
+        arrive:
+          type: object
+          required:
+            - location
+            - city
+          properties:
+            location:
+              type: string
+              description: The event's arrival location
+            city:
+              type: string
+              description: The event's arrival city
+        start_at:
+          type: string
+          description: The date and time the event starts at (UTC)
+        banner:
+          type: string
+          description: URL to the banner used on the website
+        map:
+          type: string
+          description: URL to the map used on the website
+        description:
+          type: string
+          description: The event's description in Markdown
+        rule:
+          type: string
+          description: The event's rules in Markdown
+        voice_link:
+          type: string
+          description: URL to the event's voice location
+        external_link:
+          type: string
+          description: external URL specified for the event
+        featured:
+          type: string
+          description: If the event is featured
+        vtc:
+          type: object
+          required:
+            - id
+            - name
+          description: If the Event is hosted by a VTC
+          properties:
+            id:
+              type: number
+              description: The VTC's ID
+            name:
+              type: string
+              description: The VTC's Name
+        user:
+          type: object
+          required:
+            - id
+            - username
+          properties:
+            id:
+              type: number
+              description: The event's creator's ID
+            username:
+              type: string
+              description: The event's creator's username
+        attendances:
+          type: object
+          required:
+            - confirmed
+            - unsure
+            - confirmed_users
+            - unsure_users
+          properties:
+            confirmed:
+              type: number
+              description: The number of confirmed attendees
+            unsure:
+              type: number
+              description: The number of unsure attendees
+            confirmed_users:
+              type: array
+              description: The array of confirmed attendees
+              items:
+                $ref: '#/components/schemas/EventUser'
+            unsure_users:
+              type: array
+              description: The array of unsure attendees
+              items:
+                $ref: '#/components/schemas/EventUser'
+        dlcs:
+          type: object
+          required:
+            - dlc_id
+          description: The event's required DLCs
+          properties:
+            dlc_id:
+              type: string
+              description: The DLCs id followed by the DLCs name
+        url:
+          type: string
+          description: URL to the event
+        created_at:
+          type: string
+          description: The date and time the event was created at (UTC)
+        updated_at:
+          type: string
+          description: The date and time the event was updated at (UTC)
+      required:
+        - id
+        - event_type
+        - name
+        - slug
+        - game
+        - server
+        - language
+        - departure
+        - arrive
+        - start_at
+        - banner
+        - description
+        - featured
+        - user
+        - attendances
+        - dlcs
+        - url
+        - created_at
+        - updated_at
+    EventUser:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: number
+          description: The event user's ID
+        username:
+          type: string
+          description: The event user's username
+        following:
+          type: boolean
+          description: Always false
+          default: false
+        created_at:
+          type: string
+          description: The date and time the user marked their attendance at (UTC)
+        updated_at:
+          type: string
+          description: The date and time the user updated their attendance at (UTC)
+      required:
+        - id
+        - username
+        - following
+        - created_at
+        - updated_at
+    VTCIndex:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: number
+          description: The ID of the VTC
+        name:
+          type: string
+          description: The ID of the VTC
+        owner_id:
+          type: number
+          description: The owner's ID of the VTC
+        owner_username:
+          type: string
+          description: The owner's username of the VTC
+        slogan:
+          type: string
+          description: The VTC's slogan
+        tag:
+          type: string
+          description: The VTC's tag
+        website:
+          type: string
+          description: URL to the VTC's website
+        socials:
+          type: object
+          properties:
+            twitter:
+              type: string
+              description: URL to the VTC's Twitter
+            facebook:
+              type: string
+              description: URL to the VTC's Facebook
+            twitch:
+              type: string
+              description: URL to the VTC's Twitch
+            discord:
+              type: string
+              description: URL to the VTC's Discord
+            youtube:
+              type: string
+              description: URL to the VTC's Youtube
+        games:
+          type: object
+          required:
+            - ats
+            - ets
+          properties:
+            ats:
+              type: boolean
+              description: If the VTC allows ATS
+            ets:
+              type: boolean
+              description: If the VTC allows ETS2
+        members_count:
+          type: number
+          description: The VTC's member count
+        recruitment:
+          type: string
+          description: If the VTC is accepting new members (`Close` | `Open`)
+        language:
+          type: string
+          description: The VTC's main language
+        verified:
+          type: boolean
+          description: If the VTC is verified
+        validated:
+          type: boolean
+          description: If the VTC is validated
+        created:
+          type: string
+          description: The date and time the VTC was created at (UTC)
+      required:
+        - id
+        - name
+        - owner_id
+        - owner_username
+        - slogan
+        - tag
+        - socials
+        - games
+        - members_count
+        - recruitment
+        - language
+        - verified
+        - validated
+        - created
+    VTC:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: number
+          description: The ID of the VTC
+        name:
+          type: string
+          description: The name of the VTC
+        owner_id:
+          type: number
+          description: The owner's ID of the VTC
+        owner_username:
+          type: string
+          description: The owner's username of the VTC
+        slogan:
+          type: string
+          description: The VTC's slogan
+        tag:
+          type: string
+          description: The VTC's tag
+        logo:
+          type: string
+          description: URL to the logo used on the website
+        cover:
+          type: string
+          description: URL to the cover photo used on the website
+        information:
+          type: string
+          description: The VTC's information in Markdown
+        rules:
+          type: string
+          description: The VTC's rules in Markdown
+        requirements:
+          type: string
+          description: The VTC's requirements in Markdown
+        website:
+          type: string
+          description: URL to the VTC's website
+        socials:
+          type: object
+          properties:
+            twitter:
+              type: string
+              description: URL to the VTC's Twitter
+            facebook:
+              type: string
+              description: URL to the VTC's Facebook
+            twitch:
+              type: string
+              description: URL to the VTC's Twitch
+            discord:
+              type: string
+              description: URL to the VTC's Discord
+            youtube:
+              type: string
+              description: URL to the VTC's Youtube
+        games:
+          type: object
+          required:
+            - ats
+            - ets
+          properties:
+            ats:
+              type: boolean
+              description: If the VTC allows ATS
+            ets:
+              type: boolean
+              description: If the VTC allows ETS2
+        members_count:
+          type: number
+          description: The VTC's member count
+        recruitment:
+          type: string
+          description: If the VTC is accepting new members (`Close` | `Open`)
+        language:
+          type: string
+          description: The VTC's main language
+        verified:
+          type: boolean
+          description: If the VTC is verified
+        validated:
+          type: boolean
+          description: If the VTC is validated
+        created:
+          type: string
+          description: The date and time the VTC was created at (UTC)
+      required:
+        - id
+        - name
+        - owner_id
+        - owner_username
+        - slogan
+        - tag
+        - logo
+        - cover
+        - information
+        - rules
+        - requirements
+        - socials
+        - games
+        - members_count
+        - recruitment
+        - language
+        - verified
+        - validated
+        - created
+    VTCNewsIndex:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: number
+          description: The ID of the article
+        title:
+          type: string
+          description: The title of the article
+        content_summary:
+          type: string
+          description: A summary of the article
+        author_id:
+          type: number
+          description: The user's ID who made the article
+        author:
+          type: string
+          description: The user's name who made the article
+        pinned:
+          type: boolean
+          description: If the article is pinned
+        updated_at:
+          type: string
+          description: The date and time the article was updated at (UTC)
+        published_at:
+          type: string
+          description: The date and time the article was published at (UTC)
+      required:
+        - id
+        - title
+        - content_summary
+        - author_id
+        - author
+        - pinned
+        - updated_at
+        - published_at
+    VTCNews:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: number
+          description: The ID of the article
+        title:
+          type: string
+          description: The title of the article
+        content_summary:
+          type: string
+          description: A summary of the article
+        content:
+          type: string
+          description: The article's content in Markdown
+        author_id:
+          type: number
+          description: The user's ID who made the article
+        author:
+          type: string
+          description: The user's name who made the article
+        pinned:
+          type: boolean
+          description: If the article is pinned
+        updated_at:
+          type: string
+          description: The date and time the article was updated at (UTC)
+        published_at:
+          type: string
+          description: The date and time the article was published at (UTC)
+      required:
+        - id
+        - title
+        - content_summary
+        - content
+        - author_id
+        - author
+        - pinned
+        - updated_at
+        - published_at
+    VTCRole:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: number
+          description: The ID of the role
+        name:
+          type: string
+          description: The name of the role
+        order:
+          type: number
+          description: The current position of the role
+        owner:
+          type: boolean
+          description: If the role has owner permissions
+        created_at:
+          type: string
+          description: The date and time the role was created (UTC)
+        updated_at:
+          type: string
+          description: The date and time the role was updated at (UTC)
+      required:
+        - id
+        - name
+        - order
+        - owner
+        - created_at
+        - updated_at
+    VTCMember:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: number
+          description: The ID of the VTC Member
+        user_id:
+          type: number
+          description: The member's TruckersMP ID
+        username:
+          type: string
+          description: The member's username
+        steam_id:
+          type: number
+          description: The member's STEAM_ID
+        role_id:
+          type: number
+          description: The member's role ID
+        role:
+          type: string
+          description: The member's role name
+        is_owner:
+          type: boolean
+          description: If the member has owner permissions
+        joinDate:
+          type: string
+          description: The date and time the member joined (UTC)
+      required:
+        - id
+        - user_id
+        - username
+        - steam_id
+        - role_id
+        - role
+        - joinDate
+  responses:
+    PageNotFound:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            description: ''
+            type: object
+            properties:
+              error:
+                type: boolean
+                default: true
+              descriptor:
+                type: string
+                example: Page not found
+            required:
+              - error
+              - descriptor
+tags:
+  - name: Welcome!
+    description: "Welcome to the TruckersMP API Documentation! If you find something that is either missing or wrong, please don't hesitate to open an Issue or Pull Request with the change on our [GitHub](https://github.com/TruckersMP/API-Documentation)"
+    x-traitTag: true
+  - name: API SDKs
+    description: 'As of right now we only have one SDK for PHP which can be found here: [API-Client](https://github.com/TruckersMP/API-Client)'
+    x-traitTag: true
+  - name: Players
+  - name: Servers
+  - name: Events
+  - name: Virtual Trucking Companies
+  - name: Game Information
