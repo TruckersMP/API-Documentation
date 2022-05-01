@@ -254,9 +254,7 @@ paths:
         required: true
         description: User ID
     get:
-      summary: Fetch all the events from the specified User
-      tags:
-        - Virtual Trucking Companies
+      summary: Fetch all the events from the specified user
       responses:
         '200':
           description: OK
@@ -277,7 +275,7 @@ paths:
                   - error
         '404':
           $ref: '#/components/responses/PageNotFound'
-      operationId: get-vtc-id-events
+      operationId: get-user-id-events
   /vtc:
     get:
       summary: 'Fetch all the recent, featured, and featured cover VTCs'
