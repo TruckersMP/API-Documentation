@@ -255,6 +255,8 @@ paths:
         description: User ID
     get:
       summary: Fetch all the events from the specified user
+      tags:
+        - Events
       responses:
         '200':
           description: OK
