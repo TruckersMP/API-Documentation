@@ -245,6 +245,39 @@ paths:
         '404':
           $ref: '#/components/responses/PageNotFound'
       operationId: get-events-id
+  '/events/user/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: User ID
+    get:
+      summary: Fetch all the events from the specified User
+      tags:
+        - Virtual Trucking Companies
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EventIndex'
+                required:
+                  - error
+        '404':
+          $ref: '#/components/responses/PageNotFound'
+      operationId: get-vtc-id-events
   /vtc:
     get:
       summary: 'Fetch all the recent, featured, and featured cover VTCs'
