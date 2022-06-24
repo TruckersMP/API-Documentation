@@ -866,6 +866,7 @@ components:
               description: VTC member ID or 0 if not in a VTC
         vtcHistory:
           type: array
+          nullable: true
           description: The array of VTC History for the user
           items:
             $ref: '#/components/schemas/VTCHistory'
