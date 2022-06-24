@@ -866,29 +866,9 @@ components:
               description: VTC member ID or 0 if not in a VTC
         vtcHistory:
           type: array
-          required:
-            - id
-            - name
-            - verified
-            - joinDate
-            - leftDate
-          properties:
-            id:
-              type: number
-              description: ID of the VTC
-            name:
-              type: string
-              description: Name of the VTC
-            verified:
-              type: boolean
-              description: If the VTC is verified
-            joinDate:
-              type: string
-              description: Date and time the user joined the VTC (UTC)
-            leftDate:
-              type: string
-              description: Date and time the user left the VTC (UTC)
-
+          description: The array of VTC History for the user
+          items:
+            $ref: '#/components/schemas/VTCHistory'
       required:
         - id
         - name
@@ -1401,6 +1381,25 @@ components:
         - following
         - created_at
         - updated_at
+    VTCHistory:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: number
+          description: ID of the VTC
+        name:
+          type: string
+          description: Name of the VTC
+        verified:
+          type: boolean
+          description: If the VTC is verified
+        joinDate:
+          type: string
+          description: Date and time the user joined the VTC (UTC)
+        leftDate:
+          type: string
+          description: Date and time the user left the VTC (UTC)
     VTCIndex:
       description: ''
       type: object
