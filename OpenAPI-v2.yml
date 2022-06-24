@@ -864,6 +864,31 @@ components:
             memberID:
               type: number
               description: VTC member ID or 0 if not in a VTC
+        vtcHistory:
+          type: object
+          required:
+            - id
+            - name
+            - verified
+            - joinDate
+            - leftDate
+          properties:
+            id:
+              type: number
+              description: ID of the VTC
+            name:
+              type: string
+              description: Name of the VTC
+            verified:
+              type: boolean
+              description: If the VTC is verified
+            joinDate:
+              type: string
+              description: Date and time the user joined the VTC (UTC)
+            leftDate:
+              type: string
+              description: Date and time the user left the VTC (UTC)
+
       required:
         - id
         - name
