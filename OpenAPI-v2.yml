@@ -13,6 +13,7 @@ paths:
     parameters:
       - schema:
           type: integer
+          format: int64
         name: id
         in: path
         required: true
