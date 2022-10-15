@@ -1130,6 +1130,7 @@ components:
           required:
             - confirmed
             - unsure
+            - vtcs
           properties:
             confirmed:
               type: number
@@ -1137,6 +1138,9 @@ components:
             unsure:
               type: number
               description: The number of unsure attendees
+            vtcs:
+              type: number
+              description: The number of confirmed VTCs
         dlcs:
           type: object
           description: The event's required DLCs
@@ -1298,7 +1302,9 @@ components:
           required:
             - confirmed
             - unsure
+            - vtcs
             - confirmed_users
+            - confirmed_vtcs
             - unsure_users
           properties:
             confirmed:
