@@ -1130,6 +1130,7 @@ components:
           required:
             - confirmed
             - unsure
+            - vtcs
           properties:
             confirmed:
               type: number
@@ -1137,6 +1138,9 @@ components:
             unsure:
               type: number
               description: The number of unsure attendees
+            vtcs:
+              type: number
+              description: The number of confirmed VTCs
         dlcs:
           type: object
           description: The event's required DLCs
@@ -1298,7 +1302,9 @@ components:
           required:
             - confirmed
             - unsure
+            - vtcs
             - confirmed_users
+            - confirmed_vtcs
             - unsure_users
           properties:
             confirmed:
@@ -1307,11 +1313,19 @@ components:
             unsure:
               type: number
               description: The number of unsure attendees
+            vtcs:
+              type: number
+              description: The number of confirmed VTCs
             confirmed_users:
               type: array
               description: The array of confirmed attendees
               items:
                 $ref: '#/components/schemas/EventUser'
+            confirmed_vtcs:
+              type: array
+              description: The array of confirmed VTCs
+              items:
+                $ref: '#/components/schemas/EventVTC'
             unsure_users:
               type: array
               description: The array of unsure attendees
@@ -1378,6 +1392,32 @@ components:
       required:
         - id
         - username
+        - following
+        - created_at
+        - updated_at
+    EventVTC:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: number
+          description: The VTC's ID
+        name:
+          type: string
+          description: The VTC's username
+        following:
+          type: boolean
+          description: Always false
+          default: false
+        created_at:
+          type: string
+          description: The date and time the VTC marked their attendance at (UTC)
+        updated_at:
+          type: string
+          description: The date and time the VTC updated their attendance at (UTC)
+      required:
+        - id
+        - name
         - following
         - created_at
         - updated_at
