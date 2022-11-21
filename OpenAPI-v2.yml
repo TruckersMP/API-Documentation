@@ -1801,9 +1801,12 @@ tags:
   - name: Welcome!
     description: "Welcome to the TruckersMP API Documentation! If you find something that is either missing or wrong, please don't hesitate to open an Issue or Pull Request with the change on our [GitHub](https://github.com/TruckersMP/API-Documentation)"
     x-traitTag: true
-  - name: API SDKs
-    description: 'As of right now we only have one SDK for PHP which can be found here: [API-Client](https://github.com/TruckersMP/API-Client)'
+  - name: API SDK
     x-traitTag: true
+    description: |
+      We provide two different SDK libraries as of now:
+      - [Feature-rich client (PHP)](https://github.com/TruckersMP/API-Client)
+      - [Type definitions (TypeScript)](https://github.com/TruckersMP/API-Types)
   - name: Players
   - name: Servers
   - name: Events
