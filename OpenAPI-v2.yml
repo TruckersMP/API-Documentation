@@ -544,7 +544,7 @@ paths:
         name: member_id
         in: path
         required: true
-        description: Member ID
+        description: "**NOTE** This is the user's VTC member ID, which is different to their TruckersMP User ID. The member ID can be found by accessing the GET /vtc/{id}/members endpoint"
     get:
       summary: Fetch the specified member from the specified VTC
       tags:
