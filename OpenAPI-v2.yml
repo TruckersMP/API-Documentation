@@ -1076,6 +1076,9 @@ components:
             city:
               type: string
               description: The event's arrival city
+        meetup_at:
+          type: string
+          description: The date and time the event meetup time is at (UTC)
         start_at:
           type: string
           description: The date and time the event starts at (UTC)
