@@ -114,7 +114,6 @@ paths:
       description: |-
         Latest 5 bans for a selected user if bans are not hidden or user has no bans. Fetch the player information to check if user is currently banned
 
-
         For the user to be banned the `expiration` date has to be passed or `active` has to be false.
 
         **NOTE**: The API will respond with a 200 instead of 404 status code, but will have the respected body.
@@ -898,16 +897,16 @@ components:
           description: The time the ban was issued
         active:
           type: boolean
-          description: If the ban is still active
+          description: If the ban is still active or was disabled. When a ban was issued by mistake, staff may deactivate it manually but it still shows as inactive in the ban history. Does not change if the ban expires naturally on the expiration date.
         reason:
           type: string
           description: The reason for the ban
         adminName:
           type: string
-          description: Name of the admin that banned the user
+          description: Name of the admin that banned the user. Generally redacted.
         adminID:
           type: number
-          description: TruckersMP ID for the admin that banned the user
+          description: TruckersMP ID for the admin that banned the user. Generally redacted.
       required:
         - expiration
         - timeAdded
