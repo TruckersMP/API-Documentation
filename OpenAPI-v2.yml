@@ -868,6 +868,56 @@ components:
           description: If the user do not allow to see their VTC history `null` will be returned
           items:
             $ref: '#/components/schemas/VTCHistory'
+        achievements:
+          type: array
+          description: If the user do not allow to see their achievements `null` will be returned
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+                description: ID of the achievement
+              title:
+                type: string
+                description: Title of achievement
+              description:
+                type: string
+                description: Description of achievement
+              image_url:
+                type: string
+                description: Link to achievement image
+              achieved_at:
+                type: string
+                description: Date and time the user was given the achievement (UTC)
+            required:
+              - id
+              - title
+              - description
+              - image_url
+              - achieved_at
+        awards:
+          type: array
+          description: If the user do not allow to see their awards `null` will be returned
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+                description: ID of the award
+              name:
+                type: string
+                description: Name of award
+              image_url:
+                type: string
+                description: Link to award image
+              awarded_at:
+                  type: string
+                  description: Date and time the user was given the award (UTC)
+            required:
+              - id
+              - name
+              - image_url
+              - awarded_at
       required:
         - id
         - name
@@ -1764,7 +1814,7 @@ components:
         steam_id:
           type: number
           description: The member's STEAM_ID
-        steamID64: 
+        steamID64:
           type: number
           description: The member's STEAM_ID
         steamID:
