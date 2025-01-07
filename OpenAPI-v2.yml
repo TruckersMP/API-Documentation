@@ -637,6 +637,37 @@ paths:
         '404':
           $ref: '#/components/responses/PageNotFound'
       operationId: get-vtc-id-events-event_id
+  '/vtc/{id}/events/attending':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: VTC ID
+    get:
+      summary: Fetch the attending events from the specified VTC
+      tags:
+        - Virtual Trucking Companies
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    $ref: '#/components/schemas/Event'
+                required:
+                  - error
+        '404':
+          $ref: '#/components/responses/PageNotFound'
+      operationId: get-vtc-id-events-attending
   /version:
     get:
       summary: Fetch the current TruckersMP version for ETS2 and ATS
