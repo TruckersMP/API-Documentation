@@ -668,6 +668,39 @@ paths:
         '404':
           $ref: '#/components/responses/PageNotFound'
       operationId: get-vtc-id-events-attending
+  '/vtc/{id}/partners':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: VTC ID
+    get:
+      summary: Fetch all the events from the specified VTC
+      tags:
+        - Virtual Trucking Companies
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/VTCPartnershipsIndex'
+                required:
+                  - error
+        '404':
+          $ref: '#/components/responses/PageNotFound'
+      operationId: get-vtc-id-partners
   /version:
     get:
       summary: Fetch the current TruckersMP version for ETS2 and ATS
@@ -1871,6 +1904,42 @@ components:
         - role_id
         - role
         - joinDate
+    VTCPartnershipsIndex:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: number
+          description: The ID of the VTC partnership.
+        status:
+          type: string
+          description: The status of the VTC partnership. The API will only return 'Accepted' requests.
+        created_at:
+          type: string
+          description: The timestamp the VTC partnership was first requested at by the 'sender'.
+        updated_at:
+          type: string
+          description: The timestamp the VTC partnership was last updated at. This will be due to the status changing.
+        sender:
+          type: array
+          items:
+            $ref: '#/components/schemas/VTC'
+          description: Returns a VTC object for the VTC that sent the request.
+        receiver:
+          type: array
+          items:
+            $ref: '#/components/schemas/VTC'
+          description: Returns a VTC object for the VTC that received the request.
+        pending_requests_count:
+          type: integer
+          description: Returns the number of pending VTC requests requiring action.
+      required:
+        - id
+        - status
+        - created_at
+        - updated_at
+        - sender
+        - receiver
   responses:
     PageNotFound:
       description: Example response
@@ -1904,3 +1973,4 @@ tags:
   - name: Events
   - name: Virtual Trucking Companies
   - name: Game Information
+  
