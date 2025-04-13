@@ -677,7 +677,7 @@ paths:
         required: true
         description: VTC ID
     get:
-      summary: Fetch all the events from the specified VTC
+      summary: Fetch all the partners of the specified VTC
       tags:
         - Virtual Trucking Companies
       responses:
