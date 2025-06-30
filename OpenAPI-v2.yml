@@ -1884,6 +1884,11 @@ components:
         steamID:
           type: string
           description: The member's STEAM_ID
+        roles:
+          type: array
+          description: The member's roles in the VTC
+          items:
+            $ref: '#/components/schemas/VTCRole'
         role_id:
           type: number
           description: The member's role ID
