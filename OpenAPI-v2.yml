@@ -1717,6 +1717,15 @@ components:
             ets:
               type: boolean
               description: If the VTC allows ETS2
+        dlcs:
+          type: object
+          description: The VTC's required DLCs
+          required:
+            - dlc_id
+          properties:
+            dlc_id:
+              type: string
+              description: The DLCs id followed by the DLCs name
         members_count:
           type: number
           description: The VTC's member count
