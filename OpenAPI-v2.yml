@@ -244,6 +244,40 @@ paths:
         '404':
           $ref: '#/components/responses/PageNotFound'
       operationId: get-events-id
+  '/events/{id}/slots':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: Event ID
+    get:
+      summary: Fetch slots of the specified event
+      tags:
+        - Events
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                    default: false
+                    description: If any error occurred during the request
+                  response:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EventSlot'
+                required:
+                  - error
+              examples: {}
+        '404':
+          $ref: '#/components/responses/PageNotFound'
+      operationId: get-events-id-slots
   '/events/user/{id}':
     parameters:
       - schema:
@@ -1540,6 +1574,63 @@ components:
         - following
         - created_at
         - updated_at
+    EventSlot:
+      description: ''
+      type: object
+      properties:
+        number:
+          type: number
+          description: The slot number
+        name:
+          type: string
+          description: The slot name
+        image_url:
+          type: string
+          description: URL of the slot image
+        total_spaces:
+          type: number
+          description: Total amount of spaces this slot has
+        available:
+          type: boolean
+          description: Whether this slot can be booked by VTCs
+        eligibility:
+          type: string
+          enum:
+            - all
+            - partners
+            - verified
+            - validated_and_verified
+          description: |
+            Which VTCs are eligible to book this slot.
+
+            * `all`: Any VTC
+            * `partners`: Only partners of the VTC that organized this event
+            * `verified`: Only VTCs with the "Verified" status
+            * `validated_and_verified`: VTCs with either "Validated" or "Verified" status
+        requesters:
+          type: array
+          description: VTCs that requested this slot
+          items:
+            id:
+              type: number
+              description: ID of the VTC that requested this slot
+            name:
+              type: string
+              description: Name of the VTC that requested this slot
+            logo_url:
+              type: string
+              description: Logo URL of the VTC that requested this slot
+            expected_attendees:
+              type: number
+              description: Expected amount of attendees set by the requesting VTC. Value of `0` means the slot was allocated directly.
+      required:
+        - number
+        - name
+        - image_url
+        - total_spaces
+        - available
+        - eligibility
+        - requesters
     VTCHistory:
       description: ''
       type: object
