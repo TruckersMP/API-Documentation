@@ -1611,18 +1611,25 @@ components:
           type: array
           description: VTCs that requested this slot
           items:
-            id:
-              type: number
-              description: ID of the VTC that requested this slot
-            name:
-              type: string
-              description: Name of the VTC that requested this slot
-            logo_url:
-              type: string
-              description: Logo URL of the VTC that requested this slot
-            expected_attendees:
-              type: number
-              description: Expected amount of attendees set by the requesting VTC. Value of `0` means the slot was allocated directly.
+            type: object
+            properties:
+              id:
+                type: number
+                description: ID of the VTC that requested this slot
+              name:
+                type: string
+                description: Name of the VTC that requested this slot
+              logo_url:
+                type: string
+                description: Logo URL of the VTC that requested this slot
+              expected_attendees:
+                type: number
+                description: Expected amount of attendees set by the requesting VTC. Value of `0` means the slot was allocated directly.
+            required:
+              - id
+              - name
+              - logo_url
+              - expected_attendees
       required:
         - number
         - name
