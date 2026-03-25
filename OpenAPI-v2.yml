@@ -1953,6 +1953,9 @@ components:
         order:
           type: number
           description: The current position of the role
+        color:
+          type: string
+          description: The current color of the role
         owner:
           type: boolean
           description: If the role has owner permissions
@@ -1966,6 +1969,7 @@ components:
         - id
         - name
         - order
+        - color
         - owner
         - created_at
         - updated_at
@@ -1982,6 +1986,9 @@ components:
         username:
           type: string
           description: The member's username
+        avatar:
+          type: string
+          description: URL to the avatar used on the website
         steam_id:
           type: number
           description: The member's STEAM_ID
@@ -2012,6 +2019,7 @@ components:
         - id
         - user_id
         - username
+        - avatar
         - steam_id
         - role_id
         - role
