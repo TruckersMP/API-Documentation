@@ -1134,6 +1134,59 @@ components:
         syncdelay:
           type: number
           description: Server tick rate
+        event_request:
+          type: object
+          description: Event request currently assigned to this server. This field requires `event` to be `true`, but is not guaranteed.
+          properties:
+            id:
+              type: number
+              description: ID of the Event Request
+            event_id:
+              type:
+                - number
+                - 'null'
+              description: ID of the Event, for which this Event Request has been made. `null` if the Event Request was created directly.
+            user_id:
+              type: number
+              description: ID of the user who created this request
+            info:
+              type: string
+              description: Information about the Event Request
+            rules:
+              type: string
+              description: Temporary rules for the server
+            start_at:
+              type: string
+              description: The date and time the server starts at (UTC)
+            end_at:
+              type: string
+              description: The date and time the server shuts down at (UTC)
+            header_image:
+              type:
+                - string
+                - 'null'
+              description: Event Request banner URL
+            event_link:
+              type:
+                - string
+                - 'null'
+              description: URL to the page of the event
+            forum_link:
+              type:
+                - string
+                - 'null'
+              description: URL to the Forum topic of the event
+          required:
+            - id
+            - event_id
+            - user_id
+            - info
+            - rules
+            - start_at
+            - end_at
+            - header_image
+            - event_link
+            - forum_link
       required:
         - id
         - game
