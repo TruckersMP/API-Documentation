@@ -696,7 +696,9 @@ paths:
                     default: false
                     description: If any error occurred during the request
                   response:
-                    $ref: '#/components/schemas/Event'
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EventIndex'
                 required:
                   - error
         '404':
