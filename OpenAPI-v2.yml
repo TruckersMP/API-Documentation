@@ -2028,6 +2028,19 @@ components:
       description: ''
       type: object
       properties:
+        partners:
+          type: array
+          items:
+            $ref: '#/components/schemas/VTCPartnership'
+        pending_requests_count:
+          type: integer
+          description: Amount of pending VTC partnership requests involving the VTC.
+      required:
+        - partners
+    VTCPartnership:
+      description: ''
+      type: object
+      properties:
         id:
           type: number
           description: The ID of the VTC partnership.
@@ -2041,18 +2054,15 @@ components:
           type: string
           description: The timestamp the VTC partnership was last updated at. This will be due to the status changing.
         sender:
-          type: array
-          items:
-            $ref: '#/components/schemas/VTC'
+          type: object
           description: Returns a VTC object for the VTC that sent the request.
-        receiver:
-          type: array
           items:
             $ref: '#/components/schemas/VTC'
+        receiver:
+          type: object
           description: Returns a VTC object for the VTC that received the request.
-        pending_requests_count:
-          type: integer
-          description: Returns the number of pending VTC requests requiring action.
+          items:
+            $ref: '#/components/schemas/VTC'
       required:
         - id
         - status
