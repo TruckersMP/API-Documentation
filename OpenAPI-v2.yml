@@ -664,7 +664,7 @@ paths:
                   response:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Event'
+                      $ref: '#/components/schemas/EventIndex'
                 required:
                   - error
         '404':
